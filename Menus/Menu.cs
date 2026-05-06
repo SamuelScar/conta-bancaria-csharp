@@ -64,7 +64,6 @@ public class Menu
                 return true;
 
             case 2:
-                Console.WriteLine("Listar todas as Contas ainda não implementado.");
                 return true;
 
             case 3:
@@ -72,7 +71,7 @@ public class Menu
                 return true;
 
             case 4:
-                Console.WriteLine("Atualizar Dados da Conta ainda não implementado.");
+                atualizarConta();
                 return true;
 
             case 5:
@@ -139,5 +138,62 @@ public class Menu
         }
     }
 
+    private static void atualizarConta()
+    {
+        Console.WriteLine("ATUALIZAR DADOS DA CONTA\n");
+
+        int numero = ConsoleUtils.LerInteiro("Número da conta: ");
+
+        Conta? conta = contaController.procurarPorNumero(numero);
+
+        if (conta == null) { ConsolePrinter.ExibirErro("Conta não encontrada."); return; }
+
+        Console.WriteLine("\nO que deseja atualizar?");
+        Console.WriteLine("1 - Titular");
+
+        if (conta.getTipo() == TipoConta.Corrente)
+            Console.WriteLine("2 - Limite");
+
+        if (conta.getTipo() == TipoConta.Poupanca)
+            Console.WriteLine("2 - Aniversário");
+
+        int opcao = ConsoleUtils.LerInteiro("\nSelecione a opção desejada: ");
+
+        switch (conta.getTipo())
+        {
+            case TipoConta.Corrente:
+                ContaCorrente contaCorrente = (ContaCorrente)conta;
+
+                switch (opcao)
+                {
+                    case 1: contaCorrente.setTitular(ConsoleUtils.LerTexto("Novo nome do titular: ")); break;
+                    case 2: contaCorrente.setLimite(ConsoleUtils.LerFloat("Novo limite da conta corrente: ")); break;
+                    default: ConsolePrinter.ExibirErro("Opção inválida."); return;
+                }
+
+                break;
+
+            case TipoConta.Poupanca:
+                ContaPoupanca contaPoupanca = (ContaPoupanca)conta;
+
+                switch (opcao)
+                {
+                    case 1: contaPoupanca.setTitular(ConsoleUtils.LerTexto("Novo nome do titular: ")); break;
+                    case 2: contaPoupanca.setAniversario(ConsoleUtils.LerInteiro("Novo aniversário da conta poupança: ")); break;
+                    default: ConsolePrinter.ExibirErro("Opção inválida."); return;
+                }
+
+                break;
+
+            default:
+                ConsolePrinter.ExibirErro("Tipo de conta inválido.");
+                return;
+        }
+
+        if (contaController.atualizar(conta))
+            ConsolePrinter.ExibirMensagem("Conta atualizada com sucesso.");
+        else
+            ConsolePrinter.ExibirErro("Não foi possível atualizar a conta.");
+    }
 
 }

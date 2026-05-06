@@ -43,3 +43,4 @@ Foi utilizada uma restrição de unicidade composta entre `agencia` e `numero`, 
 
 # TODO
 - ReadOnly atributo contaController na classe Menu
+- Deixar as funções do sistema em loop
