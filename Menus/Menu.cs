@@ -35,7 +35,7 @@ public class Menu
 
             continuar = executarOpcao(opcao);
 
-            if (continuar) ConsolePrinter.aguardarTecla();
+            if (continuar) ConsolePrinter.AguardarTecla();
         }
 
         ConsolePrinter.ExibirDespedida();
@@ -59,93 +59,59 @@ public class Menu
     {
         switch (opcao)
         {
-            case 1:
-                cadastrarConta();
-                return true;
-
-            case 2:
-                return true;
-
-            case 3:
-                Console.WriteLine("Procurar Conta por Número ainda não implementado.");
-                return true;
-
-            case 4:
-                atualizarConta();
-                return true;
-
-            case 5:
-                Console.WriteLine("Deletar Conta ainda não implementado.");
-                return true;
-
-            case 6:
-                Console.WriteLine("Sacar ainda não implementado.");
-                return true;
-
-            case 7:
-                Console.WriteLine("Depositar ainda não implementado.");
-                return true;
-
-            case 8:
-                Console.WriteLine("Transferir valores entre Contas ainda não implementado.");
-                return true;
-
-            case 9:
-                ConsolePrinter.ExibirMensagem("Sistema finalizado.");
-                return false;
-
-            default:
-                ConsolePrinter.ExibirErro("Opção inválida.");
-                return true;
+            case 1: cadastrarConta(); return true;
+            case 2: listarTodasContas(); return true;
+            case 3: procurarContaPorNumero(); return true;
+            case 4: atualizarConta(); return true;
+            case 5: Console.WriteLine("Deletar Conta ainda não implementado."); return true;
+            case 6: Console.WriteLine("Sacar ainda não implementado."); return true;
+            case 7: Console.WriteLine("Depositar ainda não implementado."); return true;
+            case 8: Console.WriteLine("Transferir valores entre Contas ainda não implementado."); return true;
+            case 9: ConsolePrinter.ExibirMensagem("Sistema finalizado."); return false;
+            default: ConsolePrinter.ExibirErro("Opção inválida."); return true;
         }
     }
 
     private static void cadastrarConta()
     {
-        Console.WriteLine("CADASTRO DE CONTA\n");
+        ConsolePrinter.ExibirTitulo("Cadastro de Conta");
 
         int tipo = ConsoleUtils.LerInteiro("Tipo da conta (1 - Corrente | 2 - Poupança): ");
         if (tipo is < 1 or > 2) { ConsolePrinter.ExibirErro("Tipo de conta inválido."); return; }
+
         string titular = ConsoleUtils.LerTexto("Nome do titular: ");
+
+        Conta conta;
 
         switch (tipo)
         {
             case TipoConta.Corrente:
                 float limite = ConsoleUtils.LerFloat("Limite da conta corrente: ");
-                ContaCorrente contaCorrente = new ContaCorrente(tipo, titular, limite);
-
-                if( contaController.cadastrar(contaCorrente) )
-                    ConsolePrinter.ExibirContaCadastrada(TipoConta.DescricaoCorrente, contaCorrente);
-                else
-                    ConsolePrinter.ExibirErro("Não foi possível cadastrar a conta.");
-
+                conta = new ContaCorrente(tipo, titular, limite);
                 break;
 
             case TipoConta.Poupanca:
                 int aniversario = ConsoleUtils.LerInteiro("Aniversário da conta poupança: ");
-                ContaPoupanca contaPoupanca = new ContaPoupanca(tipo, titular, aniversario);
-
-                if( contaController.cadastrar(contaPoupanca) )
-                    ConsolePrinter.ExibirContaCadastrada(TipoConta.DescricaoPoupanca, contaPoupanca);
-                else
-                    ConsolePrinter.ExibirErro("Não foi possível cadastrar a conta.");
-
+                conta = new ContaPoupanca(tipo, titular, aniversario);
                 break;
 
             default:
                 ConsolePrinter.ExibirErro("Tipo de conta inválido.");
-                break;
+                return;
         }
+
+        if (contaController.cadastrar(conta))
+            ConsolePrinter.ExibirContaComSucesso("cadastrada", conta);
+        else
+            ConsolePrinter.ExibirErro("Não foi possível cadastrar a conta.");
     }
 
     private static void atualizarConta()
     {
-        Console.WriteLine("ATUALIZAR DADOS DA CONTA\n");
-
+        ConsolePrinter.ExibirTitulo("Atualizar Dados da Conta");
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
 
         Conta? conta = contaController.procurarPorNumero(numero);
-
         if (conta == null) { ConsolePrinter.ExibirErro("Conta não encontrada."); return; }
 
         Console.WriteLine("\nO que deseja atualizar?");
@@ -191,9 +157,38 @@ public class Menu
         }
 
         if (contaController.atualizar(conta))
-            ConsolePrinter.ExibirMensagem("Conta atualizada com sucesso.");
+            ConsolePrinter.ExibirContaComSucesso("atualizada", conta);
         else
             ConsolePrinter.ExibirErro("Não foi possível atualizar a conta.");
+    }
+
+    /// <summary>
+    /// Procura uma conta pelo número informado pelo usuário.
+    /// </summary>
+    private static void procurarContaPorNumero()
+    {
+        ConsolePrinter.ExibirTitulo("Procurar Conta por Número");
+
+        int numero = ConsoleUtils.LerInteiro("Número da conta: ");
+
+        Conta? conta = contaController.procurarPorNumero(numero);
+
+        if (conta == null)
+        {
+            ConsolePrinter.ExibirErro("Conta não encontrada.");
+            return;
+        }
+
+        ConsolePrinter.ExibirConta(conta);
+    }
+
+    /// <summary>
+    /// Lista todas as contas cadastradas no sistema.
+    /// </summary>
+    private static void listarTodasContas()
+    {
+        ConsolePrinter.ExibirTitulo("Listar Todas as Contas");
+        contaController.listarTodas();
     }
 
 }

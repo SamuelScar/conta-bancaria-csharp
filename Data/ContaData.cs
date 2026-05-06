@@ -150,6 +150,52 @@ public class ContaData
         return contaEncontrada;
     }
 
+    public List<Conta> listarTodas()
+    {
+        List<Conta> contas = new List<Conta>();
+
+        string sql = @"
+        SELECT
+            numero,
+            agencia,
+            tipo,
+            titular,
+            saldo,
+            limite,
+            aniversario
+        FROM contas
+        ORDER BY numero;
+    ";
+
+        Dictionary<string, object?> parametros = new Dictionary<string, object?>();
+
+        databaseExecutor.executarConsulta(sql, parametros, reader =>
+        {
+            int tipo = reader.GetInt32(reader.GetOrdinal("tipo"));
+            string titular = reader.GetString(reader.GetOrdinal("titular"));
+
+            if (tipo == TipoConta.Corrente)
+            {
+                float limite = reader.GetFloat(reader.GetOrdinal("limite"));
+                ContaCorrente contaCorrente = new ContaCorrente(tipo, titular, limite);
+
+                preencherDadosConta(contaCorrente, reader);
+                contas.Add(contaCorrente);
+            }
+
+            if (tipo == TipoConta.Poupanca)
+            {
+                int aniversario = reader.GetInt32(reader.GetOrdinal("aniversario"));
+                ContaPoupanca contaPoupanca = new ContaPoupanca(tipo, titular, aniversario);
+
+                preencherDadosConta(contaPoupanca, reader);
+                contas.Add(contaPoupanca);
+            }
+        });
+
+        return contas;
+    }
+
     /// <summary>
     /// Preenche os dados comuns de uma conta recuperada do banco.
     /// </summary>

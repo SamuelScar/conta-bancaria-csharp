@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using conta_bancaria_csharp.Data;
 using conta_bancaria_csharp.Models;
 using conta_bancaria_csharp.Repositories;
 using conta_bancaria_csharp.Constants;
+using conta_bancaria_csharp.Utils;
 
 namespace conta_bancaria_csharp.Controllers;
 
@@ -22,7 +24,7 @@ public class ContaController : ContaRepository
     {
         if (numero <= 0)
         {
-            Console.WriteLine("Número da conta inválido.");
+            ConsolePrinter.ExibirErro("Número da conta inválido.");
             return null;
         }
 
@@ -32,12 +34,37 @@ public class ContaController : ContaRepository
         }
         catch (Exception erro)
         {
-            Console.WriteLine($"Erro ao procurar conta: {erro.Message}");
+            ConsolePrinter.ExibirErro($"Erro ao procurar conta: {erro.Message}");
             return null;
         }
     }
 
-    public void listarTodas() { }
+    /// <summary>
+    /// Lista todas as contas cadastradas.
+    /// </summary>
+    public void listarTodas()
+    {
+        try
+        {
+            List<Conta> contas = contaData.listarTodas();
+
+            if (contas.Count == 0)
+            {
+                ConsolePrinter.ExibirErro("Nenhuma conta cadastrada.");
+                return;
+            }
+
+            foreach (Conta conta in contas)
+            {
+                ConsolePrinter.ExibirConta(conta);
+                Console.WriteLine("\n------------------------");
+            }
+        }
+        catch (Exception erro)
+        {
+            ConsolePrinter.ExibirErro($"Erro ao listar contas: {erro.Message}");
+        }
+    }
 
     /// <summary>
     /// Cadastra uma nova conta.

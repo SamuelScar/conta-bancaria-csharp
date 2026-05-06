@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using conta_bancaria_csharp.Constants;
 using conta_bancaria_csharp.Models;
 
 namespace conta_bancaria_csharp.Utils;
@@ -53,18 +52,43 @@ public static class ConsolePrinter
     }
 
     /// <summary>
-    /// Exibe a mensagem de sucesso após o cadastro de uma conta.
+    /// Exibe os dados da conta após uma operação realizada com sucesso.
     /// </summary>
-    /// <param name="descricaoTipo">Descrição do tipo da conta cadastrada.</param>
-    /// <param name="conta">Conta cadastrada.</param>
-    public static void ExibirContaCadastrada(string descricaoTipo, Conta conta)
+    /// <param name="acao">Ação realizada na conta.</param>
+    /// <param name="conta">Conta relacionada à operação.</param>
+    public static void ExibirContaComSucesso(string acao, Conta conta)
+    {
+        ExibirDadosConta(
+            mensagem: $"Conta {acao} com sucesso!",
+            conta: conta
+        );
+    }
+
+    /// <summary>
+    /// Exibe os dados principais de uma conta.
+    /// </summary>
+    /// <param name="conta">Conta que será exibida.</param>
+    public static void ExibirConta(Conta conta)
+    {
+        ExibirDadosConta(
+            mensagem: "Dados da conta:",
+            conta: conta
+        );
+    }
+
+    /// <summary>
+    /// Exibe os dados principais de uma conta.
+    /// </summary>
+    /// <param name="mensagem">Mensagem inicial que será exibida.</param>
+    /// <param name="conta">Conta que terá os dados exibidos.</param>
+    private static void ExibirDadosConta(string mensagem, Conta conta)
     {
         Console.WriteLine(
-            $"\n{descricaoTipo} cadastrada com sucesso!" +
+            $"\n{mensagem}" +
             $"\nNúmero: {conta.getNumero()}" +
             $"\nAgência: {conta.getAgencia()}" +
             $"\nTitular: {conta.getTitular()}" +
-            $"\nSaldo inicial: {conta.getSaldo()}"
+            $"\nSaldo: {conta.getSaldo()}"
         );
     }
 
@@ -86,7 +110,28 @@ public static class ConsolePrinter
         Console.WriteLine(mensagem);
     }
 
-    public static void aguardarTecla()
+    /// <summary>
+    /// Exibe um título de seção no console.
+    /// </summary>
+    /// <param name="titulo">Título que será exibido.</param>
+    public static void ExibirTitulo(string titulo)
+    {
+        Console.WriteLine($"{titulo.ToUpper()}\n");
+    }
+
+    /// <summary>
+    /// Exibe uma mensagem de sucesso no console.
+    /// </summary>
+    /// <param name="mensagem">Mensagem que será exibida.</param>
+    public static void ExibirSucesso(string mensagem)
+    {
+        Console.WriteLine(mensagem);
+    }
+
+    /// <summary>
+    /// Aguarda o usuário pressionar uma tecla para continuar.
+    /// </summary>
+    public static void AguardarTecla()
     {
         Console.WriteLine("\nPressione qualquer tecla para continuar...");
         Console.ReadKey();

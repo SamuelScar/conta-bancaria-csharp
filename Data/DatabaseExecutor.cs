@@ -62,6 +62,34 @@ public class DatabaseExecutor
     }
 
     /// <summary>
+    /// Executa uma consulta SQL que pode retornar vários registros.
+    /// </summary>
+    /// <param name="sql">Comando SQL que será executado.</param>
+    /// <param name="parametros">Parâmetros utilizados no comando SQL.</param>
+    /// <param name="processarRegistro">Função responsável por processar cada registro retornado.</param>
+    public void executarConsulta(
+        string sql,
+        Dictionary<string, object?> parametros,
+        Action<NpgsqlDataReader> processarRegistro
+    )
+    {
+        using NpgsqlConnection conexao = databaseConnection.criarConexao();
+
+        conexao.Open();
+
+        using NpgsqlCommand comando = new NpgsqlCommand(sql, conexao);
+
+        adicionarParametros(comando, parametros);
+
+        using NpgsqlDataReader reader = comando.ExecuteReader();
+
+        while (reader.Read())
+        {
+            processarRegistro(reader);
+        }
+    }
+
+    /// <summary>
     /// Adiciona os parâmetros recebidos em um comando SQL.
     /// </summary>
     /// <param name="comando">Comando SQL que receberá os parâmetros.</param>
