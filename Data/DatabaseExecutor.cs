@@ -90,6 +90,51 @@ public class DatabaseExecutor
     }
 
     /// <summary>
+    /// Executa vários comandos SQL dentro de uma mesma transação.
+    /// </summary>
+    /// <param name="comandos">Lista de comandos SQL com seus respectivos parâmetros.</param>
+    /// <returns>Retorna true se todos os comandos forem executados com sucesso.</returns>
+    public bool executarComandosEmTransacao(
+        List<(string sql, Dictionary<string, object?> parametros)> comandos
+    )
+    {
+        if (comandos == null || comandos.Count == 0)
+            return false;
+
+        using NpgsqlConnection conexao = databaseConnection.criarConexao();
+
+        conexao.Open();
+
+        using NpgsqlTransaction transacao = conexao.BeginTransaction();
+
+        try
+        {
+            foreach ((string sql, Dictionary<string, object?> parametros) in comandos)
+            {
+                using NpgsqlCommand comando = new NpgsqlCommand(sql, conexao, transacao);
+
+                adicionarParametros(comando, parametros);
+
+                int linhasAfetadas = comando.ExecuteNonQuery();
+
+                if (linhasAfetadas == 0)
+                {
+                    transacao.Rollback();
+                    return false;
+                }
+            }
+
+            transacao.Commit();
+            return true;
+        }
+        catch
+        {
+            transacao.Rollback();
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Adiciona os parâmetros recebidos em um comando SQL.
     /// </summary>
     /// <param name="comando">Comando SQL que receberá os parâmetros.</param>

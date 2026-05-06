@@ -150,6 +150,10 @@ public class ContaData
         return contaEncontrada;
     }
 
+    /// <summary>
+    /// Lista todas as contas cadastradas no banco de dados.
+    /// </summary>
+    /// <returns>Retorna uma lista com todas as contas encontradas.</returns>
     public List<Conta> listarTodas()
     {
         List<Conta> contas = new List<Conta>();
@@ -194,6 +198,59 @@ public class ContaData
         });
 
         return contas;
+    }
+
+    /// <summary>
+    /// Deleta uma conta pelo número no banco de dados.
+    /// </summary>
+    /// <param name="numero">Número da conta que será deletada.</param>
+    /// <returns>Retorna true se a conta for deletada com sucesso.</returns>
+    public bool deletar(int numero)
+    {
+        string sql = @"
+        DELETE FROM contas
+        WHERE numero = @numero;
+    ";
+
+        Dictionary<string, object?> parametros = new Dictionary<string, object?>
+    {
+        { "@numero", numero }
+    };
+
+        return databaseExecutor.executarComando(sql, parametros);
+    }
+
+    /// <summary>
+    /// Atualiza o saldo de várias contas dentro de uma mesma transação.
+    /// </summary>
+    /// <param name="contas">Lista de contas com os saldos atualizados.</param>
+    /// <returns>Retorna true se todos os saldos forem atualizados com sucesso.</returns>
+    public bool atualizarSaldos(List<Conta> contas)
+    {
+        if (contas == null || contas.Count == 0)
+            return false;
+
+        string sql = @"
+        UPDATE contas
+        SET saldo = @saldo
+        WHERE numero = @numero;
+    ";
+
+        List<(string sql, Dictionary<string, object?> parametros)> comandos =
+            new List<(string sql, Dictionary<string, object?> parametros)>();
+
+        foreach (Conta conta in contas)
+        {
+            Dictionary<string, object?> parametros = new Dictionary<string, object?>
+        {
+            { "@numero", conta.getNumero() },
+            { "@saldo", conta.getSaldo() }
+        };
+
+            comandos.Add((sql, parametros));
+        }
+
+        return databaseExecutor.executarComandosEmTransacao(comandos);
     }
 
     /// <summary>

@@ -9,12 +9,10 @@ public interface ContaRepository
 {
     Conta? procurarPorNumero(int numero);
     void listarTodas();
-
     bool cadastrar(Conta conta);
     bool atualizar(Conta conta);
-
-    void deletar(int numero);
-    void sacar(int numero, float valor);
-    void depositar(int numero, float valor);
-    void transferir(int numeroOrigem, int numeroDestino, float valor);
+    bool deletar(int numero);
+    bool sacar(int numero, float valor);
+    bool depositar(int numero, float valor);
+    bool transferir(int numeroOrigem, int numeroDestino, float valor);
 }

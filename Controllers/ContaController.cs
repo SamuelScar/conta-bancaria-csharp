@@ -75,7 +75,7 @@ public class ContaController : ContaRepository
     {
         if (conta == null)
         {
-            Console.WriteLine("Conta inválida.");
+            ConsolePrinter.ExibirErro("Conta inválida.");
             return false;
         }
 
@@ -85,7 +85,7 @@ public class ContaController : ContaRepository
         }
         catch (Exception erro)
         {
-            Console.WriteLine($"Erro ao cadastrar conta: {erro.Message}");
+            ConsolePrinter.ExibirErro($"Erro ao cadastrar conta: {erro.Message}");
             return false;
         }
     }
@@ -99,7 +99,7 @@ public class ContaController : ContaRepository
     {
         if (conta == null)
         {
-            Console.WriteLine("Conta inválida.");
+            ConsolePrinter.ExibirErro("Conta inválida.");
             return false;
         }
 
@@ -109,16 +109,187 @@ public class ContaController : ContaRepository
         }
         catch (Exception erro)
         {
-            Console.WriteLine($"Erro ao atualizar conta: {erro.Message}");
+            ConsolePrinter.ExibirErro($"Erro ao atualizar conta: {erro.Message}");
             return false;
         }
     }
 
-    public void deletar(int numero) { }
+    /// <summary>
+    /// Deleta uma conta pelo número.
+    /// </summary>
+    /// <param name="numero">Número da conta que será deletada.</param>
+    /// <returns>Retorna true se a conta for deletada com sucesso.</returns>
+    public bool deletar(int numero)
+    {
+        if (numero <= 0)
+        {
+            ConsolePrinter.ExibirErro("Número da conta inválido.");
+            return false;
+        }
 
-    public void sacar(int numero, float valor) { }
+        try
+        {
+            return contaData.deletar(numero);
+        }
+        catch (Exception erro)
+        {
+            ConsolePrinter.ExibirErro($"Erro ao deletar conta: {erro.Message}");
+            return false;
+        }
+    }
 
-    public void depositar(int numero, float valor) { }
+    /// <summary>
+    /// Realiza um depósito em uma conta.
+    /// </summary>
+    /// <param name="numero">Número da conta que receberá o depósito.</param>
+    /// <param name="valor">Valor que será depositado.</param>
+    /// <returns>Retorna true se o depósito for realizado com sucesso.</returns>
+    public bool depositar(int numero, float valor)
+    {
+        if (numero <= 0)
+        {
+            ConsolePrinter.ExibirErro("Número da conta inválido.");
+            return false;
+        }
 
-    public void transferir(int numeroOrigem, int numeroDestino, float valor) { }
+        if (valor <= 0)
+        {
+            ConsolePrinter.ExibirErro("Valor de depósito inválido.");
+            return false;
+        }
+
+        try
+        {
+            Conta? conta = contaData.procurarPorNumero(numero);
+
+            if (conta == null)
+            {
+                ConsolePrinter.ExibirErro("Conta não encontrada.");
+                return false;
+            }
+
+            if (!conta.depositar(valor))
+            {
+                ConsolePrinter.ExibirErro("Não foi possível realizar o depósito.");
+                return false;
+            }
+
+            return contaData.atualizarSaldos(new List<Conta> { conta });
+        }
+        catch (Exception erro)
+        {
+            ConsolePrinter.ExibirErro($"Erro ao depositar: {erro.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Realiza um saque em uma conta.
+    /// </summary>
+    /// <param name="numero">Número da conta que realizará o saque.</param>
+    /// <param name="valor">Valor que será sacado.</param>
+    /// <returns>Retorna true se o saque for realizado com sucesso.</returns>
+    public bool sacar(int numero, float valor)
+    {
+        if (numero <= 0)
+        {
+            ConsolePrinter.ExibirErro("Número da conta inválido.");
+            return false;
+        }
+
+        if (valor <= 0)
+        {
+            ConsolePrinter.ExibirErro("Valor de saque inválido.");
+            return false;
+        }
+
+        try
+        {
+            Conta? conta = contaData.procurarPorNumero(numero);
+
+            if (conta == null)
+            {
+                ConsolePrinter.ExibirErro("Conta não encontrada.");
+                return false;
+            }
+
+            if (!conta.sacar(valor))
+            {
+                ConsolePrinter.ExibirErro("Saldo insuficiente para realizar o saque.");
+                return false;
+            }
+
+            return contaData.atualizarSaldos(new List<Conta> { conta });
+        }
+        catch (Exception erro)
+        {
+            ConsolePrinter.ExibirErro($"Erro ao sacar: {erro.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Transfere um valor entre duas contas.
+    /// </summary>
+    /// <param name="numeroOrigem">Número da conta de origem.</param>
+    /// <param name="numeroDestino">Número da conta de destino.</param>
+    /// <param name="valor">Valor que será transferido.</param>
+    /// <returns>Retorna true se a transferência for realizada com sucesso.</returns>
+    public bool transferir(int numeroOrigem, int numeroDestino, float valor)
+    {
+        if (numeroOrigem <= 0 || numeroDestino <= 0)
+        {
+            ConsolePrinter.ExibirErro("Número da conta inválido.");
+            return false;
+        }
+
+        if (numeroOrigem == numeroDestino)
+        {
+            ConsolePrinter.ExibirErro("A conta de origem e destino não podem ser iguais.");
+            return false;
+        }
+
+        if (valor <= 0)
+        {
+            ConsolePrinter.ExibirErro("Valor de transferência inválido.");
+            return false;
+        }
+
+        try
+        {
+            Conta? contaOrigem = contaData.procurarPorNumero(numeroOrigem);
+            Conta? contaDestino = contaData.procurarPorNumero(numeroDestino);
+
+            if (contaOrigem == null)
+            {
+                ConsolePrinter.ExibirErro("Conta de origem não encontrada.");
+                return false;
+            }
+
+            if (contaDestino == null)
+            {
+                ConsolePrinter.ExibirErro("Conta de destino não encontrada.");
+                return false;
+            }
+
+            if (!contaOrigem.sacar(valor))
+            {
+                ConsolePrinter.ExibirErro("Saldo insuficiente para realizar a transferência.");
+                return false;
+            }
+
+            if (!contaDestino.depositar(valor))
+            {
+                ConsolePrinter.ExibirErro("Não foi possível creditar o valor na conta de destino.");
+                return false;
+            }
+
+            return contaData.atualizarSaldos(new List<Conta> { contaOrigem, contaDestino });
+        }
+        catch (Exception erro)
+        {
+            ConsolePrinter.ExibirErro($"Erro ao transferir: {erro.Message}");
+            return false;
+        }
+    }
 }

@@ -16,7 +16,7 @@ public static class ConsolePrinter
     {
         Console.WriteLine("*****************************************************");
         Console.WriteLine("                                                     ");
-        Console.WriteLine("              BANCO CONTA BANCÁRIA                  ");
+        Console.WriteLine("          BANCO BRODASCO CONTA BANCÁRIA              ");
         Console.WriteLine("                                                     ");
         Console.WriteLine("*****************************************************");
     }
@@ -47,7 +47,7 @@ public static class ConsolePrinter
     public static void ExibirDespedida()
     {
         Console.Clear();
-        Console.WriteLine("Obrigado por utilizar o sistema do Banco Conta Bancária!");
+        Console.WriteLine("Obrigado por utilizar o sistema do Brodasco Conta Bancária!");
         Thread.Sleep(2500);
     }
 

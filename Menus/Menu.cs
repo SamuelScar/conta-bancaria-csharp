@@ -63,10 +63,10 @@ public class Menu
             case 2: listarTodasContas(); return true;
             case 3: procurarContaPorNumero(); return true;
             case 4: atualizarConta(); return true;
-            case 5: Console.WriteLine("Deletar Conta ainda não implementado."); return true;
-            case 6: Console.WriteLine("Sacar ainda não implementado."); return true;
-            case 7: Console.WriteLine("Depositar ainda não implementado."); return true;
-            case 8: Console.WriteLine("Transferir valores entre Contas ainda não implementado."); return true;
+            case 5: deletarConta(); return true;
+            case 6: sacar(); return true;
+            case 7: depositar(); return true;
+            case 8: transferir(); return true;
             case 9: ConsolePrinter.ExibirMensagem("Sistema finalizado."); return false;
             default: ConsolePrinter.ExibirErro("Opção inválida."); return true;
         }
@@ -189,6 +189,106 @@ public class Menu
     {
         ConsolePrinter.ExibirTitulo("Listar Todas as Contas");
         contaController.listarTodas();
+    }
+
+    /// <summary>
+    /// Deleta uma conta pelo número informado pelo usuário.
+    /// </summary>
+    private static void deletarConta()
+    {
+        ConsolePrinter.ExibirTitulo("Deletar Conta");
+
+        int numero = ConsoleUtils.LerInteiro("Número da conta: ");
+
+        Conta? conta = contaController.procurarPorNumero(numero);
+
+        if (conta == null)
+        {
+            ConsolePrinter.ExibirErro("Conta não encontrada.");
+            return;
+        }
+
+        if (contaController.deletar(numero))
+            ConsolePrinter.ExibirContaComSucesso("deletada", conta);
+        else
+            ConsolePrinter.ExibirErro("Não foi possível deletar a conta.");
+    }
+
+    /// <summary>
+    /// Realiza o depósito em uma conta informada pelo usuário.
+    /// </summary>
+    private static void depositar()
+    {
+        ConsolePrinter.ExibirTitulo("Depositar");
+
+        int numero = ConsoleUtils.LerInteiro("Número da conta: ");
+        float valor = ConsoleUtils.LerFloat("Valor do depósito: ");
+
+        if (!contaController.depositar(numero, valor))
+            return;
+
+        Conta? conta = contaController.procurarPorNumero(numero);
+
+        if (conta == null)
+        {
+            ConsolePrinter.ExibirErro("Depósito realizado, mas não foi possível carregar os dados atualizados da conta.");
+            return;
+        }
+
+        ConsolePrinter.ExibirMensagem("Depósito realizado com sucesso.");
+        ConsolePrinter.ExibirConta(conta);
+    }
+
+    /// <summary>
+    /// Realiza o saque em uma conta informada pelo usuário.
+    /// </summary>
+    private static void sacar()
+    {
+        ConsolePrinter.ExibirTitulo("Sacar");
+
+        int numero = ConsoleUtils.LerInteiro("Número da conta: ");
+        float valor = ConsoleUtils.LerFloat("Valor do saque: ");
+
+        if (!contaController.sacar(numero, valor))
+            return;
+
+        Conta? conta = contaController.procurarPorNumero(numero);
+
+        if (conta == null)
+        {
+            ConsolePrinter.ExibirErro("Saque realizado, mas não foi possível carregar os dados atualizados da conta.");
+            return;
+        }
+
+        ConsolePrinter.ExibirMensagem("Saque realizado com sucesso.");
+        ConsolePrinter.ExibirConta(conta);
+    }
+
+    /// <summary>
+    /// Realiza a transferência de valores entre duas contas.
+    /// </summary>
+    private static void transferir()
+    {
+        ConsolePrinter.ExibirTitulo("Transferir Valores entre Contas");
+
+        int numeroOrigem = ConsoleUtils.LerInteiro("Número da conta de origem: ");
+        int numeroDestino = ConsoleUtils.LerInteiro("Número da conta de destino: ");
+        float valor = ConsoleUtils.LerFloat("Valor da transferência: ");
+
+        if (!contaController.transferir(numeroOrigem, numeroDestino, valor))
+            return;
+
+        Conta? contaOrigem = contaController.procurarPorNumero(numeroOrigem);
+
+        if (contaOrigem == null)
+        {
+            ConsolePrinter.ExibirErro("Transferência realizada, mas não foi possível carregar os dados atualizados da conta de origem.");
+            return;
+        }
+
+        ConsolePrinter.ExibirMensagem("Transferência realizada com sucesso.");
+        ConsolePrinter.ExibirMensagem("\nConta de origem:");
+        ConsolePrinter.ExibirConta(contaOrigem);
     }
 
 }
