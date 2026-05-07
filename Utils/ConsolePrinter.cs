@@ -152,7 +152,7 @@ public static class ConsolePrinter
         Cores.EscreverLinha(valor.ToString() ?? string.Empty, Cores.Texto);
     }
 
-    private static string FormatarValor(float valor)
+    private static string FormatarValor(decimal valor)
     {
         return $"R$ {valor:F2}";
     }

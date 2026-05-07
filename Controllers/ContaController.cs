@@ -79,6 +79,9 @@ public class ContaController : ContaRepository
             return false;
         }
 
+        if (!validarConta(conta))
+            return false;
+
         try
         {
             return contaData.cadastrar(conta);
@@ -102,6 +105,9 @@ public class ContaController : ContaRepository
             ConsolePrinter.ExibirErro("Conta inválida.");
             return false;
         }
+
+        if (!validarConta(conta))
+            return false;
 
         try
         {
@@ -144,7 +150,7 @@ public class ContaController : ContaRepository
     /// <param name="numero">Número da conta que receberá o depósito.</param>
     /// <param name="valor">Valor que será depositado.</param>
     /// <returns>Retorna true se o depósito for realizado com sucesso.</returns>
-    public bool depositar(int numero, float valor)
+    public bool depositar(int numero, decimal valor)
     {
         if (numero <= 0)
         {
@@ -189,7 +195,7 @@ public class ContaController : ContaRepository
     /// <param name="numero">Número da conta que realizará o saque.</param>
     /// <param name="valor">Valor que será sacado.</param>
     /// <returns>Retorna true se o saque for realizado com sucesso.</returns>
-    public bool sacar(int numero, float valor)
+    public bool sacar(int numero, decimal valor)
     {
         if (numero <= 0)
         {
@@ -235,7 +241,7 @@ public class ContaController : ContaRepository
     /// <param name="numeroDestino">Número da conta de destino.</param>
     /// <param name="valor">Valor que será transferido.</param>
     /// <returns>Retorna true se a transferência for realizada com sucesso.</returns>
-    public bool transferir(int numeroOrigem, int numeroDestino, float valor)
+    public bool transferir(int numeroOrigem, int numeroDestino, decimal valor)
     {
         if (numeroOrigem <= 0 || numeroDestino <= 0)
         {
@@ -291,5 +297,33 @@ public class ContaController : ContaRepository
             ConsolePrinter.ExibirErro($"Erro ao transferir: {erro.Message}");
             return false;
         }
+    }
+
+    /// <summary>
+    /// Valida os dados básicos de uma conta antes de cadastrar ou atualizar.
+    /// </summary>
+    /// <param name="conta">Conta que será validada.</param>
+    /// <returns>Retorna true se os dados da conta forem válidos.</returns>
+    private bool validarConta(Conta conta)
+    {
+        if (string.IsNullOrWhiteSpace(conta.getTitular()))
+        {
+            ConsolePrinter.ExibirErro("O nome do titular é obrigatório.");
+            return false;
+        }
+
+        if (conta is ContaCorrente contaCorrente && contaCorrente.getLimite() < 0)
+        {
+            ConsolePrinter.ExibirErro("O limite da conta corrente não pode ser negativo.");
+            return false;
+        }
+
+        if (conta is ContaPoupanca contaPoupanca && contaPoupanca.getAniversario() is < 1 or > 31)
+        {
+            ConsolePrinter.ExibirErro("O aniversário da conta poupança deve estar entre 1 e 31.");
+            return false;
+        }
+
+        return true;
     }
 }

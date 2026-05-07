@@ -6,11 +6,11 @@ namespace conta_bancaria_csharp.Models;
 /// </summary>
 public class ContaCorrente : Conta
 {
-    private float limite;
+    private decimal limite;
 
-    public float getLimite() { return limite; }
+    public decimal getLimite() { return limite; }
 
-    public void setLimite(float limite)
+    public void setLimite(decimal limite)
     {
         this.limite = limite;
     }
@@ -23,7 +23,7 @@ public class ContaCorrente : Conta
     /// <param name="tipo">Tipo da conta.</param>
     /// <param name="titular">Nome do titular da conta.</param>
     /// <param name="limite">Limite disponível para a conta corrente.</param>
-    public ContaCorrente(int tipo, string titular, float limite)
+    public ContaCorrente(int tipo, string titular, decimal limite)
         : base(tipo, titular)
     {
         setLimite(limite);

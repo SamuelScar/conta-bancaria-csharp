@@ -21,7 +21,7 @@ public class ContaData
         if (conta == null)
             return false;
 
-        float? limite = null;
+        decimal? limite = null;
         int? aniversario = null;
 
         if (conta.getTipo() == TipoConta.Corrente && conta is ContaCorrente contaCorrente)
@@ -65,7 +65,7 @@ public class ContaData
         if (conta == null)
             return false;
 
-        float? limite = null;
+        decimal? limite = null;
         int? aniversario = null;
 
         if (conta.getTipo() == TipoConta.Corrente && conta is ContaCorrente contaCorrente)
@@ -130,7 +130,7 @@ public class ContaData
 
             if (tipo == TipoConta.Corrente)
             {
-                float limite = reader.GetFloat(reader.GetOrdinal("limite"));
+                decimal limite = lerDecimal(reader, "limite");
                 ContaCorrente contaCorrente = new ContaCorrente(tipo, titular, limite);
 
                 preencherDadosConta(contaCorrente, reader);
@@ -180,7 +180,7 @@ public class ContaData
 
             if (tipo == TipoConta.Corrente)
             {
-                float limite = reader.GetFloat(reader.GetOrdinal("limite"));
+                decimal limite = lerDecimal(reader, "limite");
                 ContaCorrente contaCorrente = new ContaCorrente(tipo, titular, limite);
 
                 preencherDadosConta(contaCorrente, reader);
@@ -262,6 +262,18 @@ public class ContaData
     {
         conta.setNumero(reader.GetInt32(reader.GetOrdinal("numero")));
         conta.setAgencia(reader.GetInt32(reader.GetOrdinal("agencia")));
-        conta.setSaldo(reader.GetFloat(reader.GetOrdinal("saldo")));
+        conta.setSaldo(lerDecimal(reader, "saldo"));
+    }
+
+    /// <summary>
+    /// Lê um valor decimal do banco, aceitando tipos numéricos compatíveis.
+    /// </summary>
+    /// <param name="reader">Leitor com os dados retornados do banco.</param>
+    /// <param name="coluna">Nome da coluna que será lida.</param>
+    /// <returns>Retorna o valor convertido para decimal.</returns>
+    private decimal lerDecimal(NpgsqlDataReader reader, string coluna)
+    {
+        int indice = reader.GetOrdinal(coluna);
+        return Convert.ToDecimal(reader.GetValue(indice));
     }
 }

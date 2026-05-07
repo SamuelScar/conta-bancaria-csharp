@@ -11,6 +11,9 @@
 *.sln.docstates
 *.env
 
+# Arquivos locais de referência do projeto
+/Projeto C# - Semana1 e 2.pdf
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -397,6 +400,9 @@ MSBuild_Logs/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Ignore PDF files
+*.pdf
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/

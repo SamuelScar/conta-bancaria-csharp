@@ -34,8 +34,6 @@ public class Menu
             Console.WriteLine();
 
             continuar = executarOpcao(opcao);
-
-            if (continuar) ConsolePrinter.AguardarTecla();
         }
 
         ConsolePrinter.ExibirDespedida();
@@ -59,16 +57,62 @@ public class Menu
     {
         switch (opcao)
         {
-            case 1: cadastrarConta(); return true;
-            case 2: listarTodasContas(); return true;
-            case 3: procurarContaPorNumero(); return true;
-            case 4: atualizarConta(); return true;
-            case 5: deletarConta(); return true;
-            case 6: sacar(); return true;
-            case 7: depositar(); return true;
-            case 8: transferir(); return true;
+            case 1: executarOperacaoEmLoop("Cadastro de Conta", "Cadastrar nova conta", cadastrarConta); return true;
+            case 2: executarOperacaoEmLoop("Listar Todas as Contas", "Listar contas cadastradas", listarTodasContas); return true;
+            case 3: executarOperacaoEmLoop("Procurar Conta por Número", "Procurar conta", procurarContaPorNumero); return true;
+            case 4: executarOperacaoEmLoop("Atualizar Dados da Conta", "Atualizar conta", atualizarConta); return true;
+            case 5: executarOperacaoEmLoop("Deletar Conta", "Deletar conta", deletarConta); return true;
+            case 6: executarOperacaoEmLoop("Sacar", "Realizar saque", sacar); return true;
+            case 7: executarOperacaoEmLoop("Depositar", "Realizar depósito", depositar); return true;
+            case 8: executarOperacaoEmLoop("Transferir Valores entre Contas", "Realizar transferência", transferir); return true;
             case 9: ConsolePrinter.ExibirSucesso("Sistema finalizado."); return false;
-            default: ConsolePrinter.ExibirErro("Opção inválida."); return true;
+            default:
+                ConsolePrinter.ExibirErro("Opção inválida.");
+                ConsolePrinter.AguardarTecla();
+                return true;
+        }
+    }
+
+    /// <summary>
+    /// Exibe um submenu em loop para executar uma operação até o usuário voltar ao menu principal.
+    /// </summary>
+    /// <param name="titulo">Título exibido no submenu.</param>
+    /// <param name="descricaoOperacao">Descrição da opção que executa a operação.</param>
+    /// <param name="operacao">Operação executada quando a opção principal é selecionada.</param>
+    private static void executarOperacaoEmLoop(string titulo, string descricaoOperacao, Action operacao)
+    {
+        bool voltarAoMenuPrincipal = false;
+
+        while (!voltarAoMenuPrincipal)
+        {
+            Console.Clear();
+
+            ConsolePrinter.ExibirTitulo(titulo);
+            Console.WriteLine($"1 - {descricaoOperacao}");
+            Console.WriteLine("0 - Voltar ao menu principal");
+            Console.WriteLine();
+
+            int opcao = solicitarOpcao();
+
+            Console.WriteLine();
+
+            switch (opcao)
+            {
+                case 1:
+                    Console.Clear();
+                    operacao();
+                    ConsolePrinter.AguardarTecla();
+                    break;
+
+                case 0:
+                    voltarAoMenuPrincipal = true;
+                    break;
+
+                default:
+                    ConsolePrinter.ExibirErro("Opção inválida.");
+                    ConsolePrinter.AguardarTecla();
+                    break;
+            }
         }
     }
 
@@ -86,12 +130,12 @@ public class Menu
         switch (tipo)
         {
             case TipoConta.Corrente:
-                float limite = ConsoleUtils.LerFloat("Limite da conta corrente: ");
+                decimal limite = lerLimiteContaCorrente("Limite da conta corrente (use ponto. Ex: 1000.50): ");
                 conta = new ContaCorrente(tipo, titular, limite);
                 break;
 
             case TipoConta.Poupanca:
-                int aniversario = ConsoleUtils.LerInteiro("Aniversário da conta poupança: ");
+                int aniversario = lerAniversarioContaPoupanca("Aniversário da conta poupança: ");
                 conta = new ContaPoupanca(tipo, titular, aniversario);
                 break;
 
@@ -133,7 +177,7 @@ public class Menu
                 switch (opcao)
                 {
                     case 1: contaCorrente.setTitular(ConsoleUtils.LerTexto("Novo nome do titular: ")); break;
-                    case 2: contaCorrente.setLimite(ConsoleUtils.LerFloat("Novo limite da conta corrente: ")); break;
+                    case 2: contaCorrente.setLimite(lerLimiteContaCorrente("Novo limite da conta corrente (use ponto. Ex: 1000.50): ")); break;
                     default: ConsolePrinter.ExibirErro("Opção inválida."); return;
                 }
 
@@ -145,7 +189,7 @@ public class Menu
                 switch (opcao)
                 {
                     case 1: contaPoupanca.setTitular(ConsoleUtils.LerTexto("Novo nome do titular: ")); break;
-                    case 2: contaPoupanca.setAniversario(ConsoleUtils.LerInteiro("Novo aniversário da conta poupança: ")); break;
+                    case 2: contaPoupanca.setAniversario(lerAniversarioContaPoupanca("Novo aniversário da conta poupança: ")); break;
                     default: ConsolePrinter.ExibirErro("Opção inválida."); return;
                 }
 
@@ -222,7 +266,7 @@ public class Menu
         ConsolePrinter.ExibirTitulo("Depositar");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
-        float valor = ConsoleUtils.LerFloat("Valor do depósito: ");
+        decimal valor = ConsoleUtils.LerDecimal("Valor do depósito (use ponto. Ex: 100.50): ");
 
         if (!contaController.depositar(numero, valor))
             return;
@@ -247,7 +291,7 @@ public class Menu
         ConsolePrinter.ExibirTitulo("Sacar");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
-        float valor = ConsoleUtils.LerFloat("Valor do saque: ");
+        decimal valor = ConsoleUtils.LerDecimal("Valor do saque (use ponto. Ex: 100.50): ");
 
         if (!contaController.sacar(numero, valor))
             return;
@@ -273,7 +317,7 @@ public class Menu
 
         int numeroOrigem = ConsoleUtils.LerInteiro("Número da conta de origem: ");
         int numeroDestino = ConsoleUtils.LerInteiro("Número da conta de destino: ");
-        float valor = ConsoleUtils.LerFloat("Valor da transferência: ");
+        decimal valor = ConsoleUtils.LerDecimal("Valor da transferência (use ponto. Ex: 100.50): ");
 
         if (!contaController.transferir(numeroOrigem, numeroDestino, valor))
             return;
@@ -289,6 +333,42 @@ public class Menu
         ConsolePrinter.ExibirSucesso("Transferência realizada com sucesso.");
         ConsolePrinter.ExibirMensagem("\nConta de origem:");
         ConsolePrinter.ExibirConta(contaOrigem);
+    }
+
+    /// <summary>
+    /// Lê e valida o limite de uma conta corrente.
+    /// </summary>
+    /// <param name="mensagem">Mensagem exibida ao usuário.</param>
+    /// <returns>Retorna um limite maior ou igual a zero.</returns>
+    private static decimal lerLimiteContaCorrente(string mensagem)
+    {
+        while (true)
+        {
+            decimal limite = ConsoleUtils.LerDecimal(mensagem);
+
+            if (limite >= 0)
+                return limite;
+
+            ConsolePrinter.ExibirErro("O limite da conta corrente não pode ser negativo.");
+        }
+    }
+
+    /// <summary>
+    /// Lê e valida o dia de aniversário de uma conta poupança.
+    /// </summary>
+    /// <param name="mensagem">Mensagem exibida ao usuário.</param>
+    /// <returns>Retorna um dia entre 1 e 31.</returns>
+    private static int lerAniversarioContaPoupanca(string mensagem)
+    {
+        while (true)
+        {
+            int aniversario = ConsoleUtils.LerInteiro(mensagem);
+
+            if (aniversario is >= 1 and <= 31)
+                return aniversario;
+
+            ConsolePrinter.ExibirErro("O aniversário da conta poupança deve estar entre 1 e 31.");
+        }
     }
 
 }

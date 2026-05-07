@@ -17,20 +17,20 @@ public abstract class Conta
     private int agencia;
     private int tipo;
     private string titular = string.Empty;
-    private float saldo;
+    private decimal saldo;
 
     public int getNumero() { return numero; }
     public int getAgencia() { return agencia; }
     public int getTipo() { return tipo; }
     public string getTitular() { return titular; }
-    public float getSaldo() { return saldo; }
+    public decimal getSaldo() { return saldo; }
 
     public void setNumero(int numero) { this.numero = numero; }
     public void setAgencia(int agencia) { this.agencia = agencia; }
     public void setTipo(int tipo) { this.tipo = tipo; }
-    public void setTitular(string titular) { this.titular = titular; }
-    public void setSaldo(float saldo) { this.saldo = saldo; }
-    public void setSaldoInicial() { this.saldo = 0.0f; }
+    public void setTitular(string titular) { this.titular = titular?.Trim() ?? string.Empty; }
+    public void setSaldo(decimal saldo) { this.saldo = saldo; }
+    public void setSaldoInicial() { this.saldo = 0.0m; }
 
     public Conta(int tipo, string titular)
     {
@@ -44,7 +44,7 @@ public abstract class Conta
     /// </summary>
     /// <param name="valor">Valor que será sacado da conta.</param>
     /// <returns>Retorna true se o saque for realizado com sucesso; caso contrário, false.</returns>
-    public bool sacar(float valor)
+    public bool sacar(decimal valor)
     {
         if (valor <= 0 || valor > saldo)
             return false;
@@ -52,7 +52,7 @@ public abstract class Conta
         return true;
     }
 
-    public bool depositar(float valor)
+    public bool depositar(decimal valor)
     {
         if (valor <= 0)
             return false;

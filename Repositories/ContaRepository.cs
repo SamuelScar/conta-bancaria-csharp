@@ -12,7 +12,7 @@ public interface ContaRepository
     bool cadastrar(Conta conta);
     bool atualizar(Conta conta);
     bool deletar(int numero);
-    bool sacar(int numero, float valor);
-    bool depositar(int numero, float valor);
-    bool transferir(int numeroOrigem, int numeroDestino, float valor);
+    bool sacar(int numero, decimal valor);
+    bool depositar(int numero, decimal valor);
+    bool transferir(int numeroOrigem, int numeroDestino, decimal valor);
 }

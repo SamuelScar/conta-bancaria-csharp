@@ -28,6 +28,18 @@ O método `sacar` foi mantido apenas na classe `Conta`, pois a regra de saque at
 
 Toda conta cadastrada inicia com saldo `0`. Por esse motivo, o saldo não é informado pelo usuário no momento do cadastro, sendo definido automaticamente pela própria classe `Conta`.
 
+### Valores monetários com `decimal`
+
+Embora o UML indique o uso de `float` para valores como saldo, limite, saque, depósito e transferência, foi adotado o tipo `decimal` na implementação.
+
+Essa decisão foi tomada porque esses campos representam valores monetários. Em C#, `float` trabalha com ponto flutuante binário e pode gerar pequenas imprecisões em cálculos com casas decimais, o que não é adequado para dinheiro. Já `decimal` possui maior precisão decimal e é mais indicado para operações financeiras, reduzindo riscos de arredondamentos inesperados.
+
+Dessa forma, a estrutura geral do projeto continua seguindo o UML, mas esse tipo específico foi ajustado por necessidade técnica e para garantir mais segurança nas regras de negócio envolvendo saldo e movimentações bancárias.
+
+### Aniversário da conta poupança
+
+O atributo `aniversario` da `ContaPoupanca` foi considerado como o dia do mês em que a conta faz aniversário. Por isso, o sistema aceita apenas valores entre `1` e `31`, garantindo que o dado represente um dia válido dentro do mês.
+
 ### Banco de dados
 
 Foi escolhido o PostgreSQL para realizar a persistência dos dados do sistema.
@@ -42,5 +54,5 @@ Foi utilizada uma restrição de unicidade composta entre `agencia` e `numero`, 
 
 
 # TODO
-- [ ] Deixar as funções do sistema em loop
 - [ ] Adicionar sistema de login
+- [ ] Adicionar opção de voltar ao menu inicial cancelando qualquer ação a qualquer momento
