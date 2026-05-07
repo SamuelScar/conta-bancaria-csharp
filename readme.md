@@ -50,9 +50,8 @@ As contas são armazenadas em uma única tabela chamada `contas`, pois `ContaCor
 
 O número da conta e a agência são gerados pelo banco de dados no momento do cadastro, e não diretamente pelo código C#. Essa decisão evita a necessidade de gerar valores aleatórios na aplicação e depois verificar manualmente se já existem no banco.
 
-Foi utilizada uma restrição de unicidade composta entre `agencia` e `numero`, garantindo que a combinação entre agência e número da conta seja única.
+O campo `numero` foi definido como identificador único da conta e será utilizado como chave primária no banco de dados. Por isso, as operações de busca, atualização, exclusão e movimentação utilizam apenas o número da conta como referência principal.
 
 
 # TODO
 - [ ] Adicionar sistema de login
-- [ ] Adicionar opção de voltar ao menu inicial cancelando qualquer ação a qualquer momento
