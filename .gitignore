@@ -427,3 +427,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Project statement document
+/Projeto C# - Semana1 e 2.docx

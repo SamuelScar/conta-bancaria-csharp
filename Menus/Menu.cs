@@ -11,7 +11,7 @@ namespace conta_bancaria_csharp.Menus;
 /// </summary>
 public class Menu
 {
-    private static ContaController contaController = new ContaController();
+    private static readonly ContaController contaController = new ContaController();
 
     public static void Exibir()
     {
@@ -67,7 +67,7 @@ public class Menu
             case 6: sacar(); return true;
             case 7: depositar(); return true;
             case 8: transferir(); return true;
-            case 9: ConsolePrinter.ExibirMensagem("Sistema finalizado."); return false;
+            case 9: ConsolePrinter.ExibirSucesso("Sistema finalizado."); return false;
             default: ConsolePrinter.ExibirErro("Opção inválida."); return true;
         }
     }
@@ -235,7 +235,7 @@ public class Menu
             return;
         }
 
-        ConsolePrinter.ExibirMensagem("Depósito realizado com sucesso.");
+        ConsolePrinter.ExibirSucesso("Depósito realizado com sucesso.");
         ConsolePrinter.ExibirConta(conta);
     }
 
@@ -260,7 +260,7 @@ public class Menu
             return;
         }
 
-        ConsolePrinter.ExibirMensagem("Saque realizado com sucesso.");
+        ConsolePrinter.ExibirSucesso("Saque realizado com sucesso.");
         ConsolePrinter.ExibirConta(conta);
     }
 
@@ -286,7 +286,7 @@ public class Menu
             return;
         }
 
-        ConsolePrinter.ExibirMensagem("Transferência realizada com sucesso.");
+        ConsolePrinter.ExibirSucesso("Transferência realizada com sucesso.");
         ConsolePrinter.ExibirMensagem("\nConta de origem:");
         ConsolePrinter.ExibirConta(contaOrigem);
     }
