@@ -1,4 +1,5 @@
 using System.Globalization;
+using conta_bancaria_csharp.Exceptions;
 
 namespace conta_bancaria_csharp.Utils;
 
@@ -7,18 +8,26 @@ namespace conta_bancaria_csharp.Utils;
 /// </summary>
 public static class ConsoleUtils
 {
+    public const string ComandoCancelar = "CANCELAR";
+
     public static int LerInteiro(string mensagem)
     {
-        Console.Write(mensagem);
-        return int.Parse(Console.ReadLine()!);
+        while (true)
+        {
+            string entrada = LerEntrada(mensagem);
+
+            if (int.TryParse(entrada, out int valor))
+                return valor;
+
+            ConsolePrinter.ExibirErro("Número inválido. Digite um número inteiro válido.");
+        }
     }
 
     public static decimal LerDecimal(string mensagem)
     {
         while (true)
         {
-            Console.Write(mensagem);
-            string? entrada = Console.ReadLine();
+            string entrada = LerEntrada(mensagem);
 
             if (decimal.TryParse(entrada, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal valor))
                 return valor;
@@ -31,13 +40,23 @@ public static class ConsoleUtils
     {
         while (true)
         {
-            Console.Write(mensagem);
-            string texto = Console.ReadLine()!.Trim();
+            string texto = LerEntrada(mensagem).Trim();
 
             if (!string.IsNullOrWhiteSpace(texto))
                 return texto;
 
             ConsolePrinter.ExibirErro("Texto inválido. O campo não pode ficar vazio.");
         }
+    }
+
+    private static string LerEntrada(string mensagem)
+    {
+        Console.Write(mensagem);
+        string entrada = Console.ReadLine() ?? string.Empty;
+
+        if (entrada.Trim().Equals(ComandoCancelar, StringComparison.OrdinalIgnoreCase))
+            throw new OperacaoCanceladaException();
+
+        return entrada;
     }
 }

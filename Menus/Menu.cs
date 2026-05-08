@@ -3,6 +3,7 @@ using conta_bancaria_csharp.Controllers;
 using conta_bancaria_csharp.Utils;
 using conta_bancaria_csharp.Constants;
 using conta_bancaria_csharp.Models;
+using conta_bancaria_csharp.Exceptions;
 
 namespace conta_bancaria_csharp.Menus;
 
@@ -87,7 +88,7 @@ public class Menu
         {
             Console.Clear();
 
-            ConsolePrinter.ExibirTitulo(titulo);
+            ConsolePrinter.ExibirTela(titulo);
             Console.WriteLine($"1 - {descricaoOperacao}");
             Console.WriteLine("0 - Voltar ao menu principal");
             Console.WriteLine();
@@ -100,7 +101,15 @@ public class Menu
             {
                 case 1:
                     Console.Clear();
-                    operacao();
+                    try
+                    {
+                        operacao();
+                    }
+                    catch (OperacaoCanceladaException)
+                    {
+                        ConsolePrinter.ExibirMensagem("Operação cancelada. Voltando ao submenu.");
+                    }
+
                     ConsolePrinter.AguardarTecla();
                     break;
 
@@ -118,7 +127,7 @@ public class Menu
 
     private static void cadastrarConta()
     {
-        ConsolePrinter.ExibirTitulo("Cadastro de Conta");
+        exibirTituloOperacaoCancelavel("Cadastro de Conta");
 
         int tipo = ConsoleUtils.LerInteiro("Tipo da conta (1 - Corrente | 2 - Poupança): ");
         if (tipo is < 1 or > 2) { ConsolePrinter.ExibirErro("Tipo de conta inválido."); return; }
@@ -152,7 +161,7 @@ public class Menu
 
     private static void atualizarConta()
     {
-        ConsolePrinter.ExibirTitulo("Atualizar Dados da Conta");
+        exibirTituloOperacaoCancelavel("Atualizar Dados da Conta");
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
 
         Conta? conta = contaController.procurarPorNumero(numero);
@@ -211,7 +220,7 @@ public class Menu
     /// </summary>
     private static void procurarContaPorNumero()
     {
-        ConsolePrinter.ExibirTitulo("Procurar Conta por Número");
+        exibirTituloOperacaoCancelavel("Procurar Conta por Número");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
 
@@ -231,7 +240,7 @@ public class Menu
     /// </summary>
     private static void listarTodasContas()
     {
-        ConsolePrinter.ExibirTitulo("Listar Todas as Contas");
+        ConsolePrinter.ExibirTela("Listar Todas as Contas");
         contaController.listarTodas();
     }
 
@@ -240,7 +249,7 @@ public class Menu
     /// </summary>
     private static void deletarConta()
     {
-        ConsolePrinter.ExibirTitulo("Deletar Conta");
+        exibirTituloOperacaoCancelavel("Deletar Conta");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
 
@@ -263,7 +272,7 @@ public class Menu
     /// </summary>
     private static void depositar()
     {
-        ConsolePrinter.ExibirTitulo("Depositar");
+        exibirTituloOperacaoCancelavel("Depositar");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
         decimal valor = ConsoleUtils.LerDecimal("Valor do depósito (use ponto. Ex: 100.50): ");
@@ -288,7 +297,7 @@ public class Menu
     /// </summary>
     private static void sacar()
     {
-        ConsolePrinter.ExibirTitulo("Sacar");
+        exibirTituloOperacaoCancelavel("Sacar");
 
         int numero = ConsoleUtils.LerInteiro("Número da conta: ");
         decimal valor = ConsoleUtils.LerDecimal("Valor do saque (use ponto. Ex: 100.50): ");
@@ -313,7 +322,7 @@ public class Menu
     /// </summary>
     private static void transferir()
     {
-        ConsolePrinter.ExibirTitulo("Transferir Valores entre Contas");
+        exibirTituloOperacaoCancelavel("Transferir Valores entre Contas");
 
         int numeroOrigem = ConsoleUtils.LerInteiro("Número da conta de origem: ");
         int numeroDestino = ConsoleUtils.LerInteiro("Número da conta de destino: ");
@@ -333,6 +342,17 @@ public class Menu
         ConsolePrinter.ExibirSucesso("Transferência realizada com sucesso.");
         ConsolePrinter.ExibirMensagem("\nConta de origem:");
         ConsolePrinter.ExibirConta(contaOrigem);
+    }
+
+    /// <summary>
+    /// Exibe o título da operação e a instrução única para cancelamento.
+    /// </summary>
+    /// <param name="titulo">Título da operação atual.</param>
+    private static void exibirTituloOperacaoCancelavel(string titulo)
+    {
+        ConsolePrinter.ExibirTela(titulo);
+        ConsolePrinter.ExibirMensagem($"Digite {ConsoleUtils.ComandoCancelar} em qualquer campo para cancelar a ação atual.");
+        Console.WriteLine();
     }
 
     /// <summary>

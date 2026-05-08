@@ -20,9 +20,20 @@ public static class ConsolePrinter
     {
         ExibirLinha();
         Console.WriteLine(Espaco);
-        Cores.EscreverLinha("          BANCO BRODASCO CONTA BANCÁRIA              ", Cores.Titulo);
+        Cores.EscreverLinha("                    BANCO BRODASCO                   ", Cores.Titulo);
         Console.WriteLine(Espaco);
         ExibirLinha();
+    }
+
+    /// <summary>
+    /// Exibe o cabeçalho principal seguido do título da tela atual.
+    /// </summary>
+    /// <param name="titulo">Título da tela que será exibida.</param>
+    public static void ExibirTela(string titulo)
+    {
+        ExibirCabecalho();
+        Console.WriteLine();
+        ExibirTitulo(titulo);
     }
 
     /// <summary>
@@ -52,8 +63,11 @@ public static class ConsolePrinter
     public static void ExibirDespedida()
     {
         Console.Clear();
+        ExibirCabecalho();
+        Console.WriteLine();
         Cores.EscreverLinha("Obrigado por utilizar o sistema do Brodasco Conta Bancária!", Cores.Sucesso);
         Thread.Sleep(2500);
+        Console.Clear();
     }
 
     /// <summary>
