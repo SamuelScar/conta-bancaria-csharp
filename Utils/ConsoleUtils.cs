@@ -29,6 +29,12 @@ public static class ConsoleUtils
         {
             string entrada = LerEntrada(mensagem);
 
+            if (entrada.Contains(','))
+            {
+                ConsolePrinter.ExibirErro("Valor inválido. Use ponto como separador decimal. Exemplo: 10.50");
+                continue;
+            }
+
             if (decimal.TryParse(entrada, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal valor))
                 return valor;
 

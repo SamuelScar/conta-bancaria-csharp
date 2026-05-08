@@ -1,19 +1,25 @@
 using Npgsql;
 
+namespace conta_bancaria_csharp.Data;
+
 /// <summary>
 /// Classe responsável por criar e testar a conexão com o banco de dados PostgreSQL.
 /// </summary>
 public class DatabaseConnection
 {
-    private const string connectionString =
-        "Host=localhost;Port=5432;Database=conta_bancaria;Username=postgres;Password=postgres";
+    private const string NomeVariavelConnectionString = "DATABASE_CONNECTION_STRING";
 
     /// <summary>
-    /// Cria uma nova conexão com o banco de dados.
+    /// Cria uma nova conexão com o banco de dados a partir da variável de ambiente configurada.
     /// </summary>
     /// <returns>Retorna uma conexão PostgreSQL.</returns>
     public NpgsqlConnection criarConexao()
     {
+        string? connectionString = Environment.GetEnvironmentVariable(NomeVariavelConnectionString);
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new InvalidOperationException($"Variável de ambiente {NomeVariavelConnectionString} não configurada.");
+
         return new NpgsqlConnection(connectionString);
     }
 

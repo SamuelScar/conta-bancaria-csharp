@@ -1,3 +1,5 @@
+namespace conta_bancaria_csharp.Models;
+
 /// <summary>
 /// Representa a estrutura base para uma conta bancária.
 /// </summary>
