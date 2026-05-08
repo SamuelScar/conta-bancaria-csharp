@@ -114,7 +114,6 @@ public class DatabaseExecutor
                 using NpgsqlCommand comando = new NpgsqlCommand(sql, conexao, transacao);
 
                 adicionarParametros(comando, parametros);
-
                 int linhasAfetadas = comando.ExecuteNonQuery();
 
                 if (linhasAfetadas == 0)

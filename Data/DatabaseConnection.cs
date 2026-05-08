@@ -32,9 +32,7 @@ public class DatabaseConnection
         try
         {
             using NpgsqlConnection conexao = criarConexao();
-
             conexao.Open();
-
             return true;
         }
         catch (Exception erro)

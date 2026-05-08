@@ -1,9 +1,5 @@
 namespace conta_bancaria_csharp.Models;
 
-
-/// <summary>
-/// Representa uma conta corrente.
-/// </summary>
 public class ContaCorrente : Conta
 {
     private decimal limite;

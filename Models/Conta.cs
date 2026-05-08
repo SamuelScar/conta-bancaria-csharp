@@ -1,19 +1,7 @@
 namespace conta_bancaria_csharp.Models;
 
-/// <summary>
-/// Representa a estrutura base para uma conta bancária.
-/// </summary>
 public abstract class Conta
 {
-
-    /// <summary>
-    /// Em projetos C# atualmente também é comum utilizar propriedades públicas com set protegido,
-    /// como: public int Numero { get; protected set; }
-    /// 
-    /// Os atributos foram definidos como privados para seguir fielmente a representação do diagrama UML.
-    /// 
-    /// Porém, neste projeto, a prioridade é manter a implementação alinhada ao UML fornecido.
-    /// </summary>
 
     private int numero;
     private int agencia;

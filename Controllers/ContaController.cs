@@ -8,9 +8,6 @@ using conta_bancaria_csharp.Utils;
 
 namespace conta_bancaria_csharp.Controllers;
 
-/// <summary>
-/// Classe responsável por implementar as operações definidas na interface ContaRepository.
-/// </summary>
 public class ContaController : ContaRepository
 {
     private readonly ContaData contaData = new ContaData();

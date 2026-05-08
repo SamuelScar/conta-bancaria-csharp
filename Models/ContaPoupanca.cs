@@ -1,9 +1,5 @@
 namespace conta_bancaria_csharp.Models;
 
-
-/// <summary>
-/// Representa uma conta poupança.
-/// </summary>
 public class ContaPoupanca : Conta
 {
     private int aniversario;
